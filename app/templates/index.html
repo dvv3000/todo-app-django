@@ -1,10 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block content %}
+<title> Home </title>
+<div class="container pt-4">
+    <div class="row mt-4 p-0">
+        <!--        ADD TASK        -->
+        <div class="col-lg-4 mx-auto shadow-lg p-0">
+            <div class="alert alert-primary">
+                <h2>ADD NEW TASK</h2>
+            </div>
+            <div class="p-4">
+                <form action="/add-task/" method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <hr>
+                    <input type="submit" value="Add" class="btn btn-primary">
+                </form>
+            </div>
+        </div>
+
+         <!--        TASK DISPLAY    -->
+        <div class="col">
+            <div class="border">
+                <div>
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Delete</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% for task in all_tasks %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ task.title }}</td>
+                                <td>{{ task.status }}</td>
+                                <!--Delete button-->
+                                <td>
+                                    <a href="/deleteTask/{{task.id}}" class="btn btn-danger">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
