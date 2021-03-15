@@ -11,9 +11,10 @@ from django.contrib.auth.decorators import login_required
 def home(request):
     if request.user.is_authenticated:
         user = request.user
-        form = taskform()
-        all_tasks = task.objects.filter(user = user)
-        return render(request, 'index.html', {'form' : form, 'all_tasks' : all_tasks, 'user' : user})
+        all_tasks = task.objects.filter(user = user).order_by('-status')
+        pendingTasks = task.objects.filter(status= 'P', user = user).count()
+        context = {'pendingTasks' : pendingTasks, 'all_tasks' : all_tasks, 'user' : user}
+        return render(request, 'home.html', context)
 
 def loginUser(request):
     if request.method == 'GET':
@@ -66,6 +67,10 @@ def logoutUser(request):
     return redirect('login')
 
 @login_required(login_url='login')
+def addtaskpage(request):
+    form = taskform()
+    return render(request, 'addtaskpage.html', context={'form':form})
+
 def addTask(request):
     if request.user.is_authenticated:
         user = request.user
@@ -73,16 +78,22 @@ def addTask(request):
         form = taskform(request.POST)
         if form.is_valid():
             print(form.cleaned_data)
-            todo = form.save(commit=False)
-            todo.user = user
-            todo.save()
+            task = form.save(commit=False)
+            task.user = user
+            task.save()
             return redirect('home')
         else:
-            return render(request , 'index.html' , context={'form' : form})
+            return render(request , 'home.html' , context={'form' : form})
 
 def deleteTask(request, id):
     print(id)
     task.objects.get(pk = id).delete()
     return redirect('home')
 
+def changeStatus(request, id, status):
+    currentTask = task.objects.get(pk = id)
+    currentTask.status = status
+    currentTask.save()
+    return redirect('home')
 
+# def editTask(request, id):

@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<title> Home </title>
+
+<div class="container pt-4">
+    <div class="row alert alert-primary">
+        <div class="col">
+            <h2>Hi <i>{{ user.username }}</i>, you have {{ pendingTasks }} incompleted tasks</h2>
+        </div>
+        <div class="col">
+            <a href="/addtaskpage">
+                <i class="bi bi-plus-circle-fill" title="Add task" style="margin-left: 90%; font-size: 35px;"></i>
+            </a>
+        </div>
+    </div>
+
+         <!--        TASK DISPLAY    -->
+        <div class="col">
+            <div class="border">
+                {% if all_tasks|length == 0 %}
+                    <div class="alert alert-light text-center" >
+                        <p class="display-4" style="font-size: 30px;">Nothing to display</p>
+                    </div>
+                {%  else %}
+                <div>
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Delete</th>
+                            <th>Edit</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% for task in all_tasks %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ task.title }}</td>
+                                <td>{% if task.status == 'C' %}
+                                    <a href="/change-status/{{task.id}}/P" title="Mark Pending!" >
+                                        <i class="bi bi-check-circle"></i>
+                                    </a>
+                                    {% else %}
+                                    <a href="/change-status/{{task.id}}/C" title="Mark Completed!" >
+                                        <i class="bi bi-circle"></i>
+                                    </a>
+                                    {% endif %}
+                                </td>
+                                <!--Delete button-->
+                                <td>
+                                    <a href="/deleteTask/{{task.id}}" class="btn btn-danger" title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="/editTask/{{task.id}}" class="btn btn-primary" title="Edit">
+                                        <i class="bi bi-pen-fill"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
